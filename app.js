@@ -893,8 +893,90 @@ return;
 
 // Backend AI baad me connect hoga
 
+async function sendMessage(){
+
+const message =
+userInput.value.trim();
+
+if(!message){
+return;
+}
+
+addUserMessage(message);
+
+userInput.value = "";
+
+const thinking =
+createThinking();
+
+const localReply =
+smartReply(message);
+
+if(localReply){
+
+thinking.innerText =
+localReply;
+
+speak(localReply);
+
+return;
+
+}
+
+try{
+
+const response =
+await fetch(
+"https://infinity-ai-production-e5f1.up.railway.app/chat",
+{
+
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/json"
+},
+
+body:JSON.stringify({
+
+message:message
+
+})
+
+}
+
+);
+
+const data =
+await response.json();
+
 const aiReply =
-"Backend Gemini AI will be connected later.";
+
+data.candidates?.[0]
+?.content?.parts?.[0]
+?.text
+
+||
+
+"No response from AI.";
+
+thinking.innerText =
+aiReply;
+
+speak(aiReply);
+
+}
+
+catch(error){
+
+thinking.innerText =
+"Server Error : "
++
+error.message;
+
+}
+
+}
 
 thinking.innerText =
 aiReply;
